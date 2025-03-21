@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+                git credentialsId: 'your-git-credentials', url: 'your-git-repository-url'
+            }
+        }
+        stage('Build Backend') {
+            steps {
+                dir('backend') {
+                    sh 'npm install'
+                    sh 'npx prisma generate'
+                    sh 'npm test'
+                }
+            }
+        }
+        stage('Build Frontend') {
+            steps {
+                dir('frontend') {
+                    sh 'npm install'
+                    sh 'npm run build'
+                    sh 'npm test'
+                }
+            }
+        }
+        stage('Build Docker Images') {
+            steps {
+                script {
+                    docker.build('delegal-backend', 'docker/backend.Dockerfile')
+                    docker.build('delegal-frontend', 'docker/frontend.Dockerfile')
+                }
+            }
+        }
+        stage('Push Docker Images') {
+            steps {
+                script {
+                    docker.withRegistry('your-docker-registry-url', 'your-docker-credentials') {
+                        docker.image('delegal-backend').push()
+                        docker.image('delegal-frontend').push()
+                    }
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sshagent(['your-ssh-credentials']) {
+                    sh 'ssh your-deploy-server "cd /path/to/delegal && docker-compose pull && docker-compose up -d --force-recreate"'
+                }
+            }
+        }
+    }
+}
