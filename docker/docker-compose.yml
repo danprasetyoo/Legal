@@ -1,0 +1,99 @@
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/backend.Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "postgresql://postgres:admin@192.168.1.87:5432/delegal"
+    depends_on:
+      - db
+    networks:
+      - backend-network
+    volumes:
+      - ../backend:/app
+      - /app/node_modules
+    healthcheck:
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/frontend.Dockerfile
+    ports:
+      - "5000:80"
+    networks:
+      - frontend-network
+      - backend-network
+    depends_on:
+      - backend
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    restart: always
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "5005:80"
+    volumes:
+      - ../nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - frontend-network
+      - backend-network
+    restart: always
+
+  db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: delegal
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+    restart: always
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    ports:
+      - "8181:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - jenkins-network
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - jenkins-network
+      - backend-network
+      - frontend-network
+    restart: always
+
+volumes:
+  db-data:
+  jenkins-data:
+
+
+networks:
+  backend-network:
+  frontend-network:
+  jenkins-network:
