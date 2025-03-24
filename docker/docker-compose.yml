@@ -8,7 +8,8 @@ services:
     environment:
       DATABASE_URL: "postgresql://postgres:admin@192.168.1.87:5432/delegal"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - backend-network
     volumes:
@@ -62,6 +63,11 @@ services:
       - db-data:/var/lib/postgresql/data
     networks:
       - backend-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     restart: always
 
   jenkins:

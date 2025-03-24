@@ -9,18 +9,26 @@ const LoginView = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors(validateLogin({ username, password }));
+    const validationErrors = validateLogin({ username, password });
+    setErrors(validationErrors);
 
-    if (Object.keys(errors).length === 0) {
+    if (Object.keys(validationErrors).length === 0) {
+      setIsLoading(true);
       try {
         const data = await authService.login(username, password);
         localStorage.setItem('token', data.token);
         onLogin();
-      } catch {
-        setErrors({ general: 'Invalid credentials' });
+        alert(data.message);
+      } catch (error) {
+        setErrors({
+          general: error.response?.data?.message || 'Network error',
+        });
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -44,8 +52,8 @@ const LoginView = ({ onLogin }) => {
           onChange={(e) => setPassword(e.target.value)}
         />
         {errors.password && <p className="text-red-500">{errors.password}</p>}
-        <Button type="submit" className="w-full">
-          Login
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? 'Logging in...' : 'Login'}
         </Button>
       </form>
     </Card>
