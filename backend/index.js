@@ -3,6 +3,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
+const legalOpinionRoutes = require('./routes/legalOpinionRoutes');
+const contractReviewRoutes = require('./routes/contractReviewRoutes');
 const setupSwagger = require('./utils/swagger');
 const { execSync } = require('child_process');
 
@@ -37,6 +39,9 @@ app.use('/api', (req, res, next) => {
     console.log(`API route accessed: ${req.method} ${req.originalUrl}`);
     next();
 }, authRoutes);
+
+app.use('/api', legalOpinionRoutes);
+app.use('/api/contract-reviews', contractReviewRoutes);
 
 (async () => {
     try {

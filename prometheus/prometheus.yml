@@ -7,7 +7,7 @@ scrape_configs:
       - targets: ['prometheus:9090']
   - job_name: 'backend'
     static_configs:
-      - targets: ['backend:3000']
+      - targets: ['backend:3000'] # Ensure this is correct
   - job_name: 'frontend'
     static_configs:
       - targets: ['frontend:5000']

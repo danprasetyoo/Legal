@@ -47,8 +47,8 @@ services:
       - frontend
       - backend
     networks:
-      - frontend-network
       - backend-network
+      - frontend-network
     restart: always
 
   db:

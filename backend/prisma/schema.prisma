@@ -5,8 +5,9 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   previewFeatures = ["postgresqlExtensions"]
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"] 
 }
 
 datasource db {
@@ -21,4 +22,33 @@ model Admin {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model LegalOpinion {
+  id          String   @id @default(cuid())
+  name        String
+  position    String
+  division    String
+  officeEmail String
+  reviewType  String
+  issueTitle  String
+  chronology  String
+  questions   String
+  createdAt   DateTime @default(now())
+}
+
+model ContractReview {
+  id              String   @id @default(cuid())
+  name            String
+  position        String
+  division        String
+  officeEmail     String
+  documentName    String
+  secondParty     String
+  thirdParty      String?
+  chronology      String
+  legalQuestions  String
+  documentType    String
+  additionalInfo  String?
+  createdAt       DateTime @default(now())
 }
