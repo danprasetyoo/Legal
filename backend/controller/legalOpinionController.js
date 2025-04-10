@@ -3,18 +3,18 @@ const prismaClient = new prisma();
 
 const createLegalOpinion = async (req, res) => {
     try {
-        const { legalReviewType, legalIssueTitle, legalQuestions, ...otherData } = req.body; // Extract legalQuestions
-        const contractReview = await prismaClient.legalOpinion.create({
+        const { legalReviewType, legalIssueTitle, legalQuestions, ...otherData } = req.body;
+        const legalOpinions = await prismaClient.legalOpinion.create({
             data: {
                 ...otherData,
-                reviewType: legalReviewType, // Map legalReviewType to reviewType
-                issueTitle: legalIssueTitle, // Map legalIssueTitle to issueTitle
-                questions: legalQuestions, // Map legalQuestions to questions
+                reviewType: legalReviewType,
+                issueTitle: legalIssueTitle,
+                questions: legalQuestions,
             },
         });
-        res.status(201).json(contractReview);
+        res.status(201).json(legalOpinions);
     } catch (error) {
-        console.error('Error creating LegalOpinion:', error.message);
+        console.error('Error creating Legal Opinion:', error.message);
         res.status(500).json({ message: 'Server error' });
     }
 };

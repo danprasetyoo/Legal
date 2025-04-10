@@ -5,14 +5,15 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider      = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["postgresqlExtensions"]
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x"] 
+  binaryTargets   = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pgcrypto] // Add the pgcrypto extension
 }
 
 model Admin {
@@ -38,17 +39,19 @@ model LegalOpinion {
 }
 
 model ContractReview {
-  id              String   @id @default(cuid())
-  name            String
-  position        String
-  division        String
-  officeEmail     String
-  documentName    String
-  secondParty     String
-  thirdParty      String?
-  chronology      String
-  legalQuestions  String
-  documentType    String
-  additionalInfo  String?
-  createdAt       DateTime @default(now())
+  id             String   @id @default(cuid())
+  name           String
+  position       String
+  division       String
+  officeEmail    String
+  documentName   String
+  secondParty    String
+  thirdParty     String
+  chronology     String
+  questions      String
+  documentType   String
+  reviewType     String
+  additionalInfo String
+  issueTitle     String
+  createdAt      DateTime @default(now())
 }

@@ -41,7 +41,7 @@ app.use('/api', (req, res, next) => {
 }, authRoutes);
 
 app.use('/api', legalOpinionRoutes);
-app.use('/api/contract-reviews', contractReviewRoutes);
+app.use('/api', contractReviewRoutes);
 
 (async () => {
     try {
