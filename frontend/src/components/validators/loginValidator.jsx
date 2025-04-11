@@ -1,4 +1,3 @@
-// src/validators/loginValidator.js
 const validateLogin = ({ username, password }) => {
   const errors = {};
 

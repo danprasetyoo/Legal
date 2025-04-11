@@ -33,16 +33,16 @@ export default function ContractReviewForm() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        'http://192.168.1.87:3000/api/contract-reviews',
+        `${import.meta.env.VITE_API_BASE_URL}/contract-reviews`,
         formData
       );
       setMessage('Contract reviews submitted successfully!');
       setError('');
-      setIsSuccessModalOpen(true); // Open SuccessModal
+      setIsSuccessModalOpen(true);
     } catch (err) {
       setError('Failed to submit contract review. Please try again.');
       setMessage('');
-      setIsFailureModalOpen(true); // Open FailureModal
+      setIsFailureModalOpen(true);
     }
   };
 

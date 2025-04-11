@@ -11,7 +11,7 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: `http://192.168.1.87:${process.env.PORT}`,
+                url: `${process.env.FRONTEND_URL}:${process.env.PORT}`,
             },
         ],
     },

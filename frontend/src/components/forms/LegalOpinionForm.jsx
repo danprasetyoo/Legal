@@ -28,16 +28,16 @@ export default function LegalOpinionForm() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        'http://192.168.1.87:3000/api/legal-opinions',
+        `${import.meta.env.VITE_API_BASE_URL}/legal-opinions`,
         formData
       );
       setMessage('Legal opinion submitted successfully!');
       setError('');
-      setIsSuccessModalOpen(true); // Open SuccessModal
+      setIsSuccessModalOpen(true);
     } catch (err) {
       setError('Failed to submit legal opinion. Please try again.');
       setMessage('');
-      setIsFailureModalOpen(true); // Open FailureModal
+      setIsFailureModalOpen(true);
     }
   };
 

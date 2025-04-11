@@ -1,11 +1,8 @@
-// src/components/pages/Login.jsx
 import React from 'react';
 import LoginView from '../view/LoginView';
 
 const Login = () => {
-  const handleLogin = () => {
-    // Redirect to dashboard or perform another action
-  };
+  const handleLogin = () => {};
 
   return (
     <div className="flex h-screen justify-center items-center bg-gray-100">

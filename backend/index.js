@@ -7,10 +7,21 @@ const legalOpinionRoutes = require('./routes/legalOpinionRoutes');
 const contractReviewRoutes = require('./routes/contractReviewRoutes');
 const setupSwagger = require('./utils/swagger');
 const { execSync } = require('child_process');
+const redis = require('redis');
+const winston = require('winston');
 
 const app = express();
 const host = process.env.HOST;
 const port = process.env.PORT;
+
+const logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.json(),
+    transports: [
+        new winston.transports.Console(),
+        new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    ],
+});
 
 const requiredEnvVars = ['HOST', 'PORT', 'DATABASE_URL', 'ACCESS_TOKEN_SECRET', 'FRONTEND_URL'];
 requiredEnvVars.forEach((varName) => {
@@ -29,19 +40,65 @@ app.use(cors({
 }));
 app.use(express.json());
 
+app.use((req, res, next) => {
+    logger.info(`${req.method} ${req.url}`);
+    next();
+});
+
 setupSwagger(app);
 
+const cache = redis.createClient();
+
+cache.on('error', (err) => console.error('Redis error:', err));
+cache.connect();
+
+app.use('/api', async (req, res, next) => {
+    const key = req.originalUrl;
+    const cachedData = await cache.get(key);
+    if (cachedData) {
+        console.log(`Cache hit for ${key}`);
+        return res.json(JSON.parse(cachedData));
+    }
+    console.log(`API route accessed: ${req.method} ${req.originalUrl}`);
+    next();
+});
+
+res.sendResponse = res.json;
+res.json = (body) => {
+    cache.set(key, JSON.stringify(body), { EX: 60 });
+    res.sendResponse(body);
+};
+
+// Global error handling middleware
+app.use((err, req, res, next) => {
+    console.error('Unhandled error:', err.message);
+    res.status(err.status || 500).json({ message: err.message || 'Internal Server Error' });
+});
+
+// Root route
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-app.use('/api', (req, res, next) => {
-    console.log(`API route accessed: ${req.method} ${req.originalUrl}`);
-    next();
-}, authRoutes);
+// Start the server
+(async () => {
+    try {
+        console.log('Running database migrations...');
+        execSync('npm run migrate', { stdio: 'inherit' });
+    } catch (error) {
+        console.error('Error running migrations:', error.message, error.stack);
+        process.exit(1);
+    }
 
-app.use('/api', legalOpinionRoutes);
-app.use('/api', contractReviewRoutes);
+    app.listen(port, "0.0.0.0", () => {
+        console.log(`Server running on ${host}:${port}`);
+        console.log(`Swagger docs available at ${host}:${port}/api-docs`);
+    });
+})();
+app.use((err, req, res, next) => {
+    console.error('Unhandled error:', err.message);
+    res.status(err.status || 500).json({ message: err.message || 'Internal Server Error' });
+});
 
 (async () => {
     try {
