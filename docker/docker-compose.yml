@@ -37,6 +37,22 @@ services:
       - /app/node_modules
     restart: always
 
+  admin:
+    build:
+      context: ..
+      dockerfile: docker/admin.Dockerfile
+    ports:
+      - "${ADMIN_PORT}"
+    networks:
+      - admin-network
+      - backend-network
+    depends_on:
+      - backend
+    volumes:
+      - ../admin:/app
+      - /app/node_modules
+    restart: always
+
   nginx:
     image: nginx:alpine
     ports:
@@ -46,9 +62,11 @@ services:
     depends_on:
       - frontend
       - backend
+      - admin
     networks:
       - backend-network
       - frontend-network
+      - admin-network
     restart: always
 
   db:
@@ -103,3 +121,4 @@ networks:
   backend-network:
   frontend-network:
   jenkins-network:
+  admin-network:
