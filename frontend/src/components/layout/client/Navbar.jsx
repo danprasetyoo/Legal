@@ -16,7 +16,7 @@ import {
   BuildingOfficeIcon,
   ClipboardDocumentCheckIcon,
 } from '@heroicons/react/24/outline';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link } from 'react-router-dom';
 
 const navigation = [
   { name: 'Beranda', href: '/' },

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import SuccessModal from '../common/SucessModal'; // Import SuccessModal
-import FailureModal from '../common/FailureModal'; // Import FailureModal
+import SuccessModal from '../common/SucessModal';
+import FailureModal from '../common/FailureModal';
 
 export default function LegalOpinionForm() {
   const [formData, setFormData] = useState({

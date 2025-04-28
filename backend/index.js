@@ -9,6 +9,10 @@ const setupSwagger = require('./utils/swagger');
 const { execSync } = require('child_process');
 const redis = require('redis');
 const winston = require('winston');
+const { ApolloServer } = require('apollo-server-express');
+const typeDefs = require('./graphql/schema');
+const resolvers = require('./graphql/resolvers');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const host = process.env.HOST;
@@ -90,27 +94,29 @@ app.get('/', (req, res) => {
         process.exit(1);
     }
 
+    const server = new ApolloServer({
+        typeDefs,
+        resolvers,
+        context: ({ req }) => {
+            const authHeader = req.headers.authorization || '';
+            const token = authHeader.split(' ')[1];
+            if (token) {
+                try {
+                    const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+                    return { user };
+                } catch (err) {
+                    console.error('Invalid token:', err.message);
+                }
+            }
+            return {};
+        },
+    });
+    await server.start();
+    server.applyMiddleware({ app, path: '/graphql' });
+
     app.listen(port, "0.0.0.0", () => {
         console.log(`Server running on ${host}:${port}`);
         console.log(`Swagger docs available at ${host}:${port}/api-docs`);
-    });
-})();
-app.use((err, req, res, next) => {
-    console.error('Unhandled error:', err.message);
-    res.status(err.status || 500).json({ message: err.message || 'Internal Server Error' });
-});
-
-(async () => {
-    try {
-        console.log('Running database migrations...');
-        execSync('npm run migrate', { stdio: 'inherit' });
-    } catch (error) {
-        console.error('Error running migrations:', error.message, error.stack);
-        process.exit(1);
-    }
-
-    app.listen(port, "0.0.0.0", () => {
-        console.log(`Server running on ${host}:${port}`);
-        console.log(`Swagger docs available at  ${host}:${port}/api-docs`);
+        console.log(`GraphQL endpoint available at ${host}:${port}/graphql`);
     });
 })();

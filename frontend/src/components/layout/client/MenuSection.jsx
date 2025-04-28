@@ -8,49 +8,49 @@ const menuItems = [
     description: 'Ajukan pendapat hukum untuk kebutuhan Anda.',
     buttonText: 'Selengkapnya',
     route: '/legal-opinion',
-    layout: 'lg:col-span-2', // Mengambil tiga kolom pada layar besar
+    layout: 'lg:col-span-2',
   },
   {
     title: 'Contract Review',
     description: 'Dapatkan ulasan kontrak hukum Anda.',
     buttonText: 'Selengkapnya',
     route: '/contract-review',
-    layout: 'lg:row-span-2', // Smaller card
+    layout: 'lg:row-span-2',
   },
   {
     title: 'Legal Consultation',
     description: 'Konsultasikan masalah hukum Anda dengan ahli.',
     buttonText: 'Selengkapnya',
     href: 'https://api.whatsapp.com/send/?phone=62811889932&text&type=phone_number&app_absent=0',
-    layout: 'lg:col-span-1 lg:row-span-2', // Perbaikan layout untuk menghindari konflik
+    layout: 'lg:col-span-1 lg:row-span-2',
   },
   {
     title: 'Undang-Undang',
     description: 'Akses informasi terkait undang-undang.',
     buttonText: 'Selengkapnya',
     href: 'https://peraturan.bpk.go.id/Subjek',
-    layout: 'lg:row-span-1', // Larger card spanning two rows
+    layout: 'lg:row-span-1',
   },
   {
     title: 'POJK',
     description: 'Pelajari peraturan Otoritas Jasa Keuangan.',
     buttonText: 'Selengkapnya',
     href: 'https://www.ojk.go.id/id/regulasi/otoritas-jasa-keuangan/peraturan-ojk/Default.aspx',
-    layout: 'max-lg:row-start-3', // Smaller card
+    layout: 'max-lg:row-start-3',
   },
   {
     title: 'Permen BUMN',
     description: 'Informasi terkait peraturan Menteri BUMN.',
     buttonText: 'Selengkapnya',
     href: 'https://jdih.bumn.go.id/peraturan',
-    layout: 'lg:col-start-3 lg:col-span-1 lg:row-span-2', // Contoh layout khusus
+    layout: 'lg:col-start-3 lg:col-span-1 lg:row-span-2',
   },
   {
     title: 'Dokumen Perusahaan',
     description: 'Kelola dokumen perusahaan Anda.',
     buttonText: 'Selengkapnya',
     href: 'https://docs.google.com/document/d/16Plfm33MVJAJ3mO5OHweD9Wnk3wqr8bZ/edit',
-    layout: 'lg:col-start-1 lg:row-start-4 lg:col-span-2', // Medium card
+    layout: 'lg:col-start-1 lg:row-start-4 lg:col-span-2',
   },
 ];
 
