@@ -55,3 +55,13 @@ model ContractReview {
   issueTitle     String
   createdAt      DateTime @default(now())
 }
+
+model Content {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  imageUrl  String?
+  page      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

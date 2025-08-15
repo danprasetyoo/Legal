@@ -1,6 +1,6 @@
 import React from 'react';
 
-const HeaderSection = () => {
+const HeaderSection = ({ title, description }) => {
   return (
     <div className="relative isolate overflow-hidden bg-gray-900 py-24 sm:py-32">
       <img
@@ -35,12 +35,10 @@ const HeaderSection = () => {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:mx-0">
           <h2 className="text-5xl font-semibold tracking-tight text-white sm:text-7xl">
-            Work with us
+            {title || 'Default Title'}
           </h2>
-          <p className="mt-8 text-lg font-medium text-pretty text-gray-300 sm:text-xl/8">
-            Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui
-            lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat
-            fugiat.
+          <p className="mt-8 text-lg font-medium text-gray-300 sm:text-xl/8">
+            {description || 'Default description for the header section.'}
           </p>
         </div>
         <div className="mx-auto mt-10 max-w-2xl lg:mx-0 lg:max-w-none">
