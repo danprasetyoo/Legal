@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import AdminPage from '../pages/AdminPage';
-import Login from '../pages/Login';
+import Login from '../components/pages/Login';
 
 const AppRouter = () => {
   return (

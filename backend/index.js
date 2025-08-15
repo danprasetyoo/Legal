@@ -2,9 +2,9 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
-const authRoutes = require('./routes/authRoutes');
-const legalOpinionRoutes = require('./routes/legalOpinionRoutes');
-const contractReviewRoutes = require('./routes/contractReviewRoutes');
+// const authRoutes = require('./routes/authRoutes');
+// const legalOpinionRoutes = require('./routes/legalOpinionRoutes');
+// const contractReviewRoutes = require('./routes/contractReviewRoutes');
 const setupSwagger = require('./utils/swagger');
 const { execSync } = require('child_process');
 const redis = require('redis');
@@ -13,6 +13,8 @@ const { ApolloServer } = require('apollo-server-express');
 const typeDefs = require('./graphql/schema');
 const resolvers = require('./graphql/resolvers');
 const jwt = require('jsonwebtoken');
+const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const host = process.env.HOST;
@@ -51,7 +53,9 @@ app.use((req, res, next) => {
 
 setupSwagger(app);
 
-const cache = redis.createClient();
+const cache = redis.createClient({
+    url: 'redis://redis:6379'
+});
 
 cache.on('error', (err) => console.error('Redis error:', err));
 cache.connect();
@@ -64,14 +68,25 @@ app.use('/api', async (req, res, next) => {
         return res.json(JSON.parse(cachedData));
     }
     console.log(`API route accessed: ${req.method} ${req.originalUrl}`);
+    res.sendResponse = res.json.bind(res);
+    res.json = (body) => {
+        cache.set(key, JSON.stringify(body), { EX: 60 });
+        res.sendResponse(body);
+    };
     next();
 });
 
-res.sendResponse = res.json;
-res.json = (body) => {
-    cache.set(key, JSON.stringify(body), { EX: 60 });
-    res.sendResponse(body);
-};
+// Serve static files from React app
+const staticPath = path.join(__dirname, '../admin/build');
+if (!fs.existsSync(staticPath)) {
+    console.warn(`Warning: Static files directory not found at ${staticPath}`);
+}
+app.use(express.static(staticPath));
+
+// Fallback route for SPA
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../admin/build', 'index.html'));
+});
 
 // Global error handling middleware
 app.use((err, req, res, next) => {
